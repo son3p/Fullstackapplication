@@ -116,6 +116,13 @@ dist
 # We use it until we change to Azure settings
 # add the .env to git ignore after that, the .env.local always in .gitignore
 
-//hm .env
+# dotenv environment variables file
+#.env
+#.env.test
 .env.local
+
+#kw no test
+TEST-*.xml
+#kw no coverage
+/coverage
 
