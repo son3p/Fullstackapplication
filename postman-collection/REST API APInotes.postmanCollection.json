@@ -1,0 +1,293 @@
+{
+	"info": {
+		"_postman_id": "b59237a6-b99e-401e-b0c7-39203c202949",
+		"name": "REST API Notes",
+		"description": "To test Notes API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "test",
+									"type": "text"
+								},
+								
+								{
+									"key": "password",
+									"value": "test123",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "test@n.fi",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/register?=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "test123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Todos",
+			"item": [
+				{
+					"name": "Todo Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDVkMDRjYjBjODQ2NzJjZDg2ODM3YSIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidEBuLmZpIiwic3ViIjoiNjQwNWQwNGNiMGM4NDY3MmNkODY4MzdhIiwianRpIjoxMjM0NTY3ODksImlhdCI6OTg3NjU0MzIxLCJleHAiOjk4ODI1OTEyMX0.Er0ERBdA44PjTM5qOHdShldX_7TUnPN2UqoTW0Adx9E",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "title",
+									"value": "testing todo task",
+									"type": "text"
+								},
+								{
+									"key": "body",
+									"value": "testing note body",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/todos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Todo List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDVkMDRjYjBjODQ2NzJjZDg2ODM3YSIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidEBuLmZpIiwic3ViIjoiNjQwNWQwNGNiMGM4NDY3MmNkODY4MzdhIiwianRpIjoxMjM0NTY3ODksImlhdCI6OTg3NjU0MzIxLCJleHAiOjk4ODI1OTEyMX0.Er0ERBdA44PjTM5qOHdShldX_7TUnPN2UqoTW0Adx9E",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/todos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Todo Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDVkMDRjYjBjODQ2NzJjZDg2ODM3YSIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidEBuLmZpIiwic3ViIjoiNjQwNWQwNGNiMGM4NDY3MmNkODY4MzdhIiwianRpIjoxMjM0NTY3ODksImlhdCI6OTg3NjU0MzIxLCJleHAiOjk4ODI1OTEyMX0.Er0ERBdA44PjTM5qOHdShldX_7TUnPN2UqoTW0Adx9E",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/todos/5d43d14a246036209713e667",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"todos",
+								"5d43d14a246036209713e667"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Todo Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDVkMDRjYjBjODQ2NzJjZDg2ODM3YSIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidEBuLmZpIiwic3ViIjoiNjQwNWQwNGNiMGM4NDY3MmNkODY4MzdhIiwianRpIjoxMjM0NTY3ODksImlhdCI6OTg3NjU0MzIxLCJleHAiOjk4ODI1OTEyMX0.Er0ERBdA44PjTM5qOHdShldX_7TUnPN2UqoTW0Adx9E",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "task",
+									"value": "testing note 123",
+									"type": "text"
+								},
+								{
+									"key": "body",
+									"value": "testing note body 456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/notes/5d43d753cdbdd1264291806c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"todos",
+								"5d43d753cdbdd1264291806c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Todo Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDVkMDRjYjBjODQ2NzJjZDg2ODM3YSIsInVzZXJuYW1lIjoidGVzdCIsImVtYWlsIjoidEBuLmZpIiwic3ViIjoiNjQwNWQwNGNiMGM4NDY3MmNkODY4MzdhIiwianRpIjoxMjM0NTY3ODksImlhdCI6OTg3NjU0MzIxLCJleHAiOjk4ODI1OTEyMX0.Er0ERBdA44PjTM5qOHdShldX_7TUnPN2UqoTW0Adx9E",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/todos/5d43d753cdbdd1264291806c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"todos",
+								"5d43d753cdbdd1264291806c"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
