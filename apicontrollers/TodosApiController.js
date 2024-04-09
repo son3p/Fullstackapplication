@@ -81,7 +81,6 @@ class TodosApiController {
         check("task", "Task must not be empty.").isLength({ min: 1 }).trim(),
         check("body", "Body may be empty.").trim(),
         check("estimated_time", "Estimated time muust be a number").isNumeric(),
-        check("created_at", "Created at must be a valid date").isISO8601(),
         body("*").escape(),
         async (req, res) => {
             try {
@@ -125,7 +124,6 @@ class TodosApiController {
         check("task", "Task must not be empty.").isLength({ min: 1 }).trim(),
         check("body", "Body may be empty.").trim(),
         check("estimated_time", "Estimated time muust be a number").isNumeric(),
-        check("created_at", "Created at must be a valid date").isISO8601(),
         body("*").escape(),
         async (req, res) => {
             try {
