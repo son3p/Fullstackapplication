@@ -81,10 +81,6 @@ class TodosApiController {
     create = [
         // a list of callbacks
         check("task", "Task can't be empty.").isLength({ min: 1 }).trim(),
-        check("priority", "Priority can't be empty.").isEmpty().trim(),
-        check("estimated_time", "Estimated time must be a number").isNumeric(),
-        check("estimated_time", "Estimated time can't be empty").isEmpty(),
-        check("deadline", "Deadline can't be empty").isEmpty(),
         body("*").escape(),
         async (req, res) => {
             try {
@@ -128,10 +124,6 @@ class TodosApiController {
  */
     update = [
         check("task", "Task can't be empty.").isLength({ min: 1 }).trim(),
-        check("priority", "Priority can't be empty.").isEmpty().trim(),
-        check("estimated_time", "Estimated time must be a number").isNumeric(),
-        check("estimated_time", "Estimated time can't be empty").isEmpty(),
-        check("deadline", "Deadline can't be empty").isEmpty(),
         body("*").escape(),
         async (req, res) => {
             try {
