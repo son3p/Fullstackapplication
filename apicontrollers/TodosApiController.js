@@ -74,7 +74,7 @@ class TodosApiController {
      * @param {string}      priority
      * @param {number}      estimated_time
      * @param {Date}        created_at
-     * @param {Date}        deadline
+     * @param {number}        deadline
     * 
      * @returns {Object}
      */
@@ -118,7 +118,7 @@ class TodosApiController {
  * @param {string}      priority
  * @param {number}      estimated_time
  * @param {Date}        created_at
- * @param {Date}        deadline
+ * @param {number}        deadline
  * 
  * @returns {Object}
  */
