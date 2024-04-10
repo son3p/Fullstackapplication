@@ -15,7 +15,8 @@ class TodosApiController {
         return {
             id: data.id,
             task: data.task,
-            body: data.body,
+            priority: data.priority,
+            deadline: data.deadline,
             estimated_time: data.estimated_time,
             createdAt: data.createdAt,
         }
@@ -70,17 +71,20 @@ class TodosApiController {
      * Note Create.
      * 
      * @param {string}      task 
-     * @param {string}      body
+     * @param {string}      priority
      * @param {number}      estimated_time
-     * @param {string}      created_at
-      * 
+     * @param {Date}        created_at
+     * @param {Date}        deadline
+    * 
      * @returns {Object}
      */
     create = [
         // a list of callbacks
-        check("task", "Task must not be empty.").isLength({ min: 1 }).trim(),
-        check("body", "Body may be empty.").trim(),
-        check("estimated_time", "Estimated time muust be a number").isNumeric(),
+        check("task", "Task can't be empty.").isLength({ min: 1 }).trim(),
+        check("priority", "Priority can't be empty.").isEmpty().trim(),
+        check("estimated_time", "Estimated time must be a number").isNumeric(),
+        check("estimated_time", "Estimated time can't be empty").isEmpty(),
+        check("deadline", "Deadline can't be empty").isEmpty(),
         body("*").escape(),
         async (req, res) => {
             try {
@@ -92,9 +96,10 @@ class TodosApiController {
                     const createdTodo = await this.TodoManager.addTodo(
                         req.user, 
                         req.body.task, 
-                        req.body.body,
+                        req.body.priority,
                         req.body.estimated_time,
-                        req.body.created_at
+                        req.body.created_at,
+                        req.body.deadline
                     );
                     if (!createdTodo) {
                         return apiResponse.errorResponse(res, 'Could not create todo');
@@ -114,16 +119,19 @@ class TodosApiController {
  * Note Update.
  * 
  * @param {string}      task 
- * @param {string}      body
+ * @param {string}      priority
  * @param {number}      estimated_time
- * @param {string}      created_at
+ * @param {Date}        created_at
+ * @param {Date}        deadline
  * 
  * @returns {Object}
  */
     update = [
-        check("task", "Task must not be empty.").isLength({ min: 1 }).trim(),
-        check("body", "Body may be empty.").trim(),
-        check("estimated_time", "Estimated time muust be a number").isNumeric(),
+        check("task", "Task can't be empty.").isLength({ min: 1 }).trim(),
+        check("priority", "Priority can't be empty.").isEmpty().trim(),
+        check("estimated_time", "Estimated time must be a number").isNumeric(),
+        check("estimated_time", "Estimated time can't be empty").isEmpty(),
+        check("deadline", "Deadline can't be empty").isEmpty(),
         body("*").escape(),
         async (req, res) => {
             try {
@@ -140,7 +148,9 @@ class TodosApiController {
                         //update note.
                         const todo = {
                             task: req.body.task,
-                            body: req.body.body,
+                            priority: req.body.priority,
+                            estimated_time: req.body.estimated_time,
+                            deadline: req.body.deadline,
                             id: req.params.id
                         };
 
