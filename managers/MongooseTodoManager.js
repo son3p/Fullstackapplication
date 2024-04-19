@@ -1,10 +1,12 @@
 import chalk from 'chalk';
 import Todo from '../models/TodoModel.js';
+import Task from '../models/TaskModel.js'
 
 class MongooseTodoManager {
     constructor() {
         // For note manager, so that we remember the class used 
         this.TodoModel = Todo;
+        this.TaskModel = Task;
     }
 
     async initialize(app = null) {
@@ -30,7 +32,7 @@ class MongooseTodoManager {
         }
     }
 
-    async addTodo(user, task, body, estimated_time, created_at) {
+    async addTodo(user, task, body, estimated_time, created_at, priority) {
         // Check that we have a selected user
         if (user) {
             // The uniqueness for the title is now per user!
@@ -52,11 +54,45 @@ class MongooseTodoManager {
                     console.log(chalk.green.inverse('New todo added!'));
                     // Convert from Mongoose to plain object
                     const savedTodo = addedTodoDocument.toObject();
+                    const todoId = savedTodo.id
+                    await this.addTask(todoId, priority)
                     return savedTodo;
                 } else
                     console.log(chalk.red.inverse('Error in db creating the new todo!'))
             } else
                 console.log(chalk.red.inverse('Todo title taken!'))
+        } else
+            console.log(chalk.red.inverse('No user given!'))
+
+        // here when something wrong
+        return null;
+
+    }
+
+    async addTask(todoId, priority) {
+        // Check that we have a selected user
+        if (todoId) {
+            // The uniqueness for the title is now per user!
+            //pick the user.id
+            // The lean option autogenerates a pojo
+            const haveDuplicatetask = await this.TaskModel.findOne({ belongsTo: todoId }).lean();
+            if (!haveDuplicatetask) {
+                const newTask = {
+                    priority: priority,
+                    belongsTo: todoId
+                };
+                // Here we get a database document back, we like to return a POJO, plain javascript object back so we stay neutral to the db tech.
+                const addedTaskDocument = await this.TaskModel.create(newTask);
+
+                if (addedTaskDocument) {
+                    console.log(chalk.green.inverse('New Task added!'));
+                    // Convert from Mongoose to plain object
+                    const savedTask = addedTaskDocument.toObject();
+                    return savedTask;
+                } else
+                    console.log(chalk.red.inverse('Error in db creating the new task!'))
+            } else
+                console.log(chalk.red.inverse('Task title taken!'))
         } else
             console.log(chalk.red.inverse('No user given!'))
 

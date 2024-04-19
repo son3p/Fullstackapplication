@@ -73,6 +73,7 @@ class TodosApiController {
      * @param {string}      body
      * @param {number}      estimated_time
      * @param {string}      created_at
+     * @param {string}      priority
       * 
      * @returns {Object}
      */
@@ -94,7 +95,8 @@ class TodosApiController {
                         req.body.task, 
                         req.body.body,
                         req.body.estimated_time,
-                        req.body.created_at
+                        req.body.created_at,
+                        req.body.priority
                     );
                     if (!createdTodo) {
                         return apiResponse.errorResponse(res, 'Could not create todo');
