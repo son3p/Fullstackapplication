@@ -102,24 +102,32 @@ class MongooseTodoManager {
     }
 
     async removeTodo(user, id) {
-        // The uniqueness for the note is id! Then check if user same as belongsTo
-        // The populate is mongoose way of filling in the data for the child property,
-        // in this case the 'belongsTo' property, when executing the query
-        const selectedTodoById = await this.TodoModel.findById(id).populate('belongsTo');
-
-        if (selectedTodoById) {
-            // Here we security check that this note really belongs to the user!
-            // How would YOU do if the user is the admin user? 
-            if (selectedTodoById.belongsTo.id == user.id) {
-                const removedTodoDocument = await this.TodoModel.findByIdAndDelete(id);
-                console.log(chalk.green.inverse('Todo removed!' + removedTodoDocument));
-                return removedTodoDocument.toObject();
-            } else {
-                console.log(chalk.red.inverse(`Todo id and user do not correlate! No deletion made!`))
+        try {
+            // Find the todo by ID
+            const selectedTodo = await this.TodoModel.findById(id);
+    
+            if (!selectedTodo) {
+                console.log(chalk.red.inverse(`No todo found with id = ${id} !`));
                 return null;
             }
-        } else {
-            console.log(chalk.red.inverse(`No todo found with id = ${id} !`))
+    
+            // Check if the todo belongs to the user
+            if (selectedTodo.belongsTo.toString() !== user.id) {
+                console.log(chalk.red.inverse(`Todo id and user do not correlate! No deletion made!`));
+                return null;
+            }
+    
+            // Delete the todo
+            const removedTodoDocument = await this.TodoModel.findByIdAndDelete(id);
+            console.log(chalk.green.inverse('Todo removed:', removedTodoDocument));
+    
+            // Find and delete associated tasks
+            await this.TaskModel.deleteMany({ belongsTo: id });
+            console.log(chalk.green.inverse('Associated tasks removed'));
+    
+            return removedTodoDocument.toObject();
+        } catch (error) {
+            console.error(chalk.red.inverse('Error:', error));
             return null;
         }
     }
