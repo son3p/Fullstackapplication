@@ -132,16 +132,16 @@ class MongooseTodoManager {
         }
     }
 
-    async changeTodo(user, todo) {
+    async changeTodo(user, todo, priority) {
 
         // Here we need to get the full document to be able to do save
         // Here we use mongoose to only select the combination of id and user, ie secured access
         // No lean() here so that we can use save
         //pick user.id
         const todoToChangeDocument = await this.TodoModel.findOne({ _id: todo.id, belongsTo: user.id });
-
+    
         if (todoToChangeDocument) {
-
+    
             // The title should be unique for user so check so that we do not already have
             // for this user a document with this title!
             const oldTask = todoToChangeDocument.task;
@@ -150,22 +150,28 @@ class MongooseTodoManager {
             if (oldTask != todo.task)
                 //pick user.id
                 sameTaskTodo = await this.TodoModel.findOne({ task: todo.task, belongsTo: user.id });
-
+    
             if (!sameTaskTodo) {
                 // It is ok to change title for user
                 todoToChangeDocument.task = todo.task;
                 todoToChangeDocument.body = todo.body;
+                todoToChangeDocument.estimated_time = todo.estimated_time;
                 console.log(chalk.green.inverse('Todo changed!'));
-
+    
                 const changedTodoDocument = await todoToChangeDocument.save();
+                const childTasks = await this.TaskModel.find({ belongsTo: todo.id })
+                for (const task of childTasks) {
+                    task.priority = priority; // Use the priority parameter here
+                    await task.save()
+                }
                 //Give back the changed as plain object
                 return changedTodoDocument.toObject();
             } else
                 console.log(chalk.red.inverse('Todo with same title exists for this user!'))
-
+    
         } else
             console.log(chalk.red.inverse('Todo to change not found!'))
-
+    
         // all paths except success comes here
         return null;
     }
