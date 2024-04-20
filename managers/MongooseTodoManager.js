@@ -55,21 +55,27 @@ class MongooseTodoManager {
     }
 
     async addTodo(user, task, body, estimated_time, created_at, priority) {
-        
         if (user) {
+            
+            const estimatedTimeInt = parseInt(estimated_time);
+            
+            
+            if (isNaN(estimatedTimeInt)) {
+                
+                console.log(chalk.red.inverse('Invalid estimated time provided!'));
+                return null;
+            }
             
             const haveDuplicateTodo = await this.TodoModel.findOne({ belongsTo: user.id, task }).lean();
             if (!haveDuplicateTodo) {
                 const newTodo = {
                     task: task, 
-                    body: body,  
-                    estimated_time: estimated_time,
                     created_at: created_at,
                     belongsTo: user.id
                 };
                 
                 const addedTodoDocument = await this.TodoModel.create(newTodo);
-
+    
                 if (addedTodoDocument) {
                     console.log(chalk.green.inverse('New todo added!'));
                     
@@ -79,22 +85,24 @@ class MongooseTodoManager {
                         savedTodo.tasks = [];
                     }
     
-                    await this.addTask(todoId, priority)
+                    await this.addTask(todoId, priority, estimatedTimeInt, body)
                     savedTodo.tasks.push(todoId)
                     return savedTodo;
-                } else
+                } else {
                     console.log(chalk.red.inverse('Error in db creating the new todo!'))
-            } else
+                    return null;
+                }
+            } else {
                 console.log(chalk.red.inverse('Todo title taken!'))
-        } else
+            }
+        } else {
             console.log(chalk.red.inverse('No user given!'))
-
-        
+        }
+    
         return null;
-
     }
 
-    async addTask(todoId, priority) {
+    async addTask(todoId, priority, body, estimated_time) {
         
         if (todoId) {
             
@@ -102,6 +110,8 @@ class MongooseTodoManager {
             if (!haveDuplicatetask) {
                 const newTask = {
                     priority: priority,
+                    body: body,
+                    estimated_time: estimated_time,
                     belongsTo: todoId
                 };
                 
@@ -155,7 +165,7 @@ class MongooseTodoManager {
         }
     }
 
-    async changeTodo(user, todo, priority) {
+    async changeTodo(user, todo, priority, body, estimated_time) {
 
         
         const todoToChangeDocument = await this.TodoModel.findOne({ _id: todo.id, belongsTo: user.id });
@@ -173,14 +183,14 @@ class MongooseTodoManager {
             if (!sameTaskTodo) {
                 
                 todoToChangeDocument.task = todo.task;
-                todoToChangeDocument.body = todo.body;
-                todoToChangeDocument.estimated_time = todo.estimated_time;
                 console.log(chalk.green.inverse('Todo changed!'));
     
                 const changedTodoDocument = await todoToChangeDocument.save();
                 const childTasks = await this.TaskModel.find({ belongsTo: todo.id })
                 for (const task of childTasks) {
                     task.priority = priority; 
+                    task.body = body;
+                    task.estimated_time = estimated_time;
                     await task.save()
                 }
                 
@@ -201,7 +211,7 @@ class MongooseTodoManager {
             const foundTodo = await this.TodoModel.findOne({ _id: id, belongsTo: user.id }).populate('tasks');
     
             if (foundTodo) {
-                console.log(chalk.green.inverse('Got todo: ' + foundTodo.task + ':' + foundTodo.body + foundTodo.priority));
+                console.log(chalk.green.inverse('Got todo: ' + foundTodo.task));
                 
                 const todoObject = foundTodo.toObject();
                 

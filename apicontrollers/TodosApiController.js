@@ -15,8 +15,6 @@ class TodosApiController {
         return {
             id: data.id,
             task: data.task,
-            body: data.body,
-            estimated_time: data.estimated_time,
             createdAt: data.createdAt,
             tasks: data.tasks
         }
@@ -144,13 +142,13 @@ class TodosApiController {
                         //update note.
                         const todo = {
                             task: req.body.task,
-                            body: req.body.body,
-                            estimated_time: req.body.estimated_time,
                             id: req.params.id
                         };
                         const priority = req.body.priority;
+                        const body = req.body.body
+                        const estimated_time = req.body.estimated_time
 
-                        const updatedTodo = await this.TodoManager.changeTodo(req.user, todo, priority);
+                        const updatedTodo = await this.TodoManager.changeTodo(req.user, todo, priority, body, estimated_time);
                         if (!updatedTodo) {
                             return apiResponse.errorResponse(res, 'Could not update todo');
                         } else {
