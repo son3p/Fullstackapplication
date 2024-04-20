@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 import User from '../../models/UserModel.js';
 import Todo from '../../models/TodoModel.js';
+import Task from '../../models/TaskModel.js';
 
 // suppress the warning
 mongoose.set('strictQuery', false);
@@ -146,6 +147,14 @@ class MongooseStorage {
 
     async seed() {
         // Initialize database
+        const tasks = await Task.find({})
+        if (tasks.length == 0) {
+            try {
+            await Task.create({ priority: 'high', belongsTo: '661d7309eaa530711c9b1d0d' })
+        } catch (e) {
+            console.error(e)
+        }
+        }
         const users = await User.find({});
 
         if (users.length == 0) {

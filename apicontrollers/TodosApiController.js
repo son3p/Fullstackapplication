@@ -15,9 +15,8 @@ class TodosApiController {
         return {
             id: data.id,
             task: data.task,
-            body: data.body,
-            estimated_time: data.estimated_time,
             createdAt: data.createdAt,
+            tasks: data.tasks
         }
     }
 
@@ -73,6 +72,7 @@ class TodosApiController {
      * @param {string}      body
      * @param {number}      estimated_time
      * @param {string}      created_at
+     * @param {string}      priority
       * 
      * @returns {Object}
      */
@@ -94,7 +94,8 @@ class TodosApiController {
                         req.body.task, 
                         req.body.body,
                         req.body.estimated_time,
-                        req.body.created_at
+                        req.body.created_at,
+                        req.body.priority
                     );
                     if (!createdTodo) {
                         return apiResponse.errorResponse(res, 'Could not create todo');
@@ -117,6 +118,7 @@ class TodosApiController {
  * @param {string}      body
  * @param {number}      estimated_time
  * @param {string}      created_at
+ * @param {string}      priority
  * 
  * @returns {Object}
  */
@@ -140,11 +142,13 @@ class TodosApiController {
                         //update note.
                         const todo = {
                             task: req.body.task,
-                            body: req.body.body,
                             id: req.params.id
                         };
+                        const priority = req.body.priority;
+                        const body = req.body.body
+                        const estimated_time = req.body.estimated_time
 
-                        const updatedTodo = await this.TodoManager.changeTodo(req.user, todo);
+                        const updatedTodo = await this.TodoManager.changeTodo(req.user, todo, priority, body, estimated_time);
                         if (!updatedTodo) {
                             return apiResponse.errorResponse(res, 'Could not update todo');
                         } else {
