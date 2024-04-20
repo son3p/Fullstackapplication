@@ -18,7 +18,7 @@ class TodosApiController {
             body: data.body,
             estimated_time: data.estimated_time,
             createdAt: data.createdAt,
-            priority: data.priority,
+            tasks: data.tasks
         }
     }
 

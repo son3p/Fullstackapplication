@@ -17,18 +17,42 @@ class MongooseTodoManager {
 
     async fetchTodos(user) {
         try {
-            // No lean here so we can use toObject
-            //pick the user.id
+            // Find all todos belonging to the user
             const allTodosBelongingToUser = await this.TodoModel.find({ belongsTo: user.id });
-            // Convert mongoose _id to id
-            const allTodoObjects = allTodosBelongingToUser.map(element => {
-                return element.toObject()
-            })
+    
+            // Iterate over each todo
+            const allTodoObjects = await Promise.all(allTodosBelongingToUser.map(async (element) => {
+                const todoObject = element.toObject();
+                // Fetch tasks for the current todo
+                const tasks = await this.fetchTasks(element._id);
+                // Add tasks to the todo object
+                todoObject.tasks = tasks;
+                return todoObject;
+            }));
+            
             console.log(chalk.blueBright.inverse('All Todos loaded'));
-            return allTodoObjects
+            return allTodoObjects;
         } catch (e) {
             console.log(chalk.blueBright.inverse('Empty todos loaded'));
-            return []
+            return [];
+        }
+    }
+
+    async fetchTasks(todoId) {
+        try {
+            // Find all tasks belonging to the specified todoId
+            const allTasksBelongingToTodo = await this.TaskModel.find({ belongsTo: todoId });
+            
+            // Convert tasks to plain objects
+            const allTaskObjects = allTasksBelongingToTodo.map(element => {
+                const taskObject = element.toObject();
+                return taskObject;
+            });
+            
+            return allTaskObjects;
+        } catch (e) {
+            console.error(e);
+            return [];
         }
     }
 
@@ -55,7 +79,12 @@ class MongooseTodoManager {
                     // Convert from Mongoose to plain object
                     const savedTodo = addedTodoDocument.toObject();
                     const todoId = savedTodo.id
+                    if (!savedTodo.tasks) {
+                        savedTodo.tasks = [];
+                    }
+    
                     await this.addTask(todoId, priority)
+                    savedTodo.tasks.push(todoId)
                     return savedTodo;
                 } else
                     console.log(chalk.red.inverse('Error in db creating the new todo!'))
@@ -181,10 +210,10 @@ class MongooseTodoManager {
         // On a query we can use lean to get a plain javascript object
         // Use mongoose criteria for id and belongsTo user
         //pick user.id
-        const foundTodo = await this.TodoModel.findOne({ _id: id, belongsTo: user.id });
+        const foundTodo = await this.TodoModel.findOne({ _id: id, belongsTo: user.id }).populate('tasks');
 
         if (foundTodo) {
-            console.log(chalk.green.inverse('Got todo: ' + foundTodo.task + ':' + foundTodo.body));
+            console.log(chalk.green.inverse('Got todo: ' + foundTodo.task + ':' + foundTodo.body + foundTodo.priority));
             // Convert to POJO
             return foundTodo.toObject();
         } else {

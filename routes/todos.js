@@ -8,6 +8,7 @@ const theTodosApiController = new TodosApiController();
 const router = express.Router();
 
 router.get("/", Authenticator.authenticateApi, theTodosApiController.list)
+router.get("/:id", Authenticator.authenticateApi, theTodosApiController.detail)
 //router.get("/", theNotesApiController.list)
 router.post("/", Authenticator.authenticateApi, theTodosApiController.create);
 router.put("/:id", Authenticator.authenticateApi, theTodosApiController.update);
