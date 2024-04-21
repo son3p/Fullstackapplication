@@ -16,7 +16,7 @@ function changeIdType(doc, ret) {
 
 // Define the schema
 const TaskSchema = new Schema({
-	body: {type: String, required: false},
+	task: {type: String, required: false},
     estimated_time: {type: String, required: false},
 	priority: { type: String, required: true },
 	belongsTo: { type: Schema.ObjectId, ref: "Todo", required: true },

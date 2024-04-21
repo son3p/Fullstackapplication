@@ -1,11 +1,11 @@
 import { check, body, validationResult } from "express-validator";
 import apiResponse from "../helpers/apiResponse.js";
-import MongooseTodoManager from '../managers/MongooseTodoManager.js';
+import MongooseTaskManager from '../managers/MongooseTaskManager.js';
 
 
-class TodosApiController {
+class TasksApiController {
     constructor() {
-        this.TodoManager = new MongooseTodoManager();
+        this.TaskManager = new MongooseTaskManager();
     }
     /**
      * Converts to POJO
@@ -14,9 +14,10 @@ class TodosApiController {
         // Here we can choose what data to include
         return {
             id: data.id,
-            todo: data.todo,
+            task: data.task,
+            priority: data.priority,
+            estimated_time: data.estimated_time,
             createdAt: data.createdAt,
-            createdBy: data.createdBy,
         }
     }
 
@@ -27,10 +28,11 @@ class TodosApiController {
      */
     list = async (req, res) => {
         try {
-            const allTodos = await this.TodoManager.fetchTodos(req.user);
-            if (allTodos.length > 0) {
-                const todos = allTodos.map(document => this.includeData(document));
-                return apiResponse.successResponseWithData(res, "Operation success", todos);
+            const todoId = req.params.id
+            const allTasks = await this.TaskManager.fetchTasks(todoId);
+            if (allTasks.length > 0) {
+                const tasks = allTasks.map(document => this.includeData(document));
+                return apiResponse.successResponseWithData(res, "Operation success", tasks);
             } else {
                 return apiResponse.successResponseWithData(res, "Operation success", []);
             }
@@ -68,14 +70,18 @@ class TodosApiController {
     /**
      * Note Create.
      * 
-     * @param {string}      todo 
+     * @param {string}      task 
+     * @param {string}      priority
+     * @param {number}      estimated_time
      * @param {string}      created_at
       * 
      * @returns {Object}
      */
     create = [
         // a list of callbacks
-        check("todo", "Todo must not be empty.").isLength({ min: 1 }).trim(),
+        check("task", "Task must not be empty.").isLength({ min: 1 }).trim(),
+        check("priority", "Body may be empty.").trim(),
+        check("estimated_time", "Estimated time muust be a number").isNumeric(),
         body("*").escape(),
         async (req, res) => {
             try {
@@ -84,16 +90,20 @@ class TodosApiController {
                     return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
                 } else {
                     //Save note.
-                    const createdTodo = await this.TodoManager.addTodo(
-                        req.user, 
-                        req.body.todo, 
-                        req.body.created_at
+                    const todoId = req.params.id
+                    const createdTask = await this.TaskManager.addTask(
+                        todoId, 
+                        req.body.task, 
+                        req.body.priority,
+                        req.body.estimated_time,
+                        req.body.created_at,
+                        
                     );
-                    if (!createdTodo) {
-                        return apiResponse.errorResponse(res, 'Could not create todo');
+                    if (!createdTask) {
+                        return apiResponse.errorResponse(res, 'Could not create task');
                     } else {
-                        let todoData = this.includeData(createdTodo);
-                        return apiResponse.successResponseWithData(res, "Todo add Success.", todoData);
+                        let taskData = this.includeData(createdTask);
+                        return apiResponse.successResponseWithData(res, "Task add Success.", taskData);
                     };
                 }
             } catch (err) {
@@ -106,13 +116,16 @@ class TodosApiController {
     /**
  * Note Update.
  * 
- * @param {string}      todo 
- * @param {string}      body
+ * @param {string}      task 
+ * @param {string}      priority
+ * @param {number}      estimated_time
  * 
  * @returns {Object}
  */
     update = [
-        check("todo", "Todo must not be empty.").isLength({ min: 1 }).trim(),
+        check("task", "Task must not be empty.").isLength({ min: 1 }).trim(),
+        check("priority", "Body may be empty.").trim(),
+        check("estimated_time", "Estimated time muust be a number").isNumeric(),
         body("*").escape(),
         async (req, res) => {
             try {
@@ -121,23 +134,27 @@ class TodosApiController {
                     return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
                 } else {
                     //pick the user.id
-                    const foundTodo = await this.TodoManager.getTodoById(req.user, req.params.id);
+                    const todoId = req.params.id
+                    const taskId = req.params.childid
+                    const foundTask = await this.TaskManager.getTaskById(todoId, taskId);
 
-                    if (foundTodo === null) {
-                        return apiResponse.notFoundResponse(res, "Todo not exists with this id or You are not authorized ");
+                    if (foundTask === null) {
+                        return apiResponse.notFoundResponse(res, "Task not exists with this id or You are not authorized ");
                     } else {
                         //update note.
-                        const todo = {
-                            todo: req.body.todo,
-                            id: req.params.id
+                        const task = {
+                            task: req.body.task,
+                            priority: req.body.priority,
+                            estimated_time: req.body.estimated_time,
+                            id: taskId 
                         };
 
-                        const updatedTodo = await this.TodoManager.changeTodo(req.user, todo);
-                        if (!updatedTodo) {
-                            return apiResponse.errorResponse(res, 'Could not update todo');
+                        const updatedTask = await this.TaskManager.changeTask(task, todoId);
+                        if (!updatedTask) {
+                            return apiResponse.errorResponse(res, 'Could not update task');
                         } else {
-                            let todoData = this.includeData(todo);
-                            return apiResponse.successResponseWithData(res, "Todo update Success.", todoData);
+                            let taskData = this.includeData(task);
+                            return apiResponse.successResponseWithData(res, "Task update Success.", taskData);
                         }
                     }
                 }
@@ -159,16 +176,18 @@ class TodosApiController {
         async (req, res) => {
             try {
                 //k wNote.findById(req.params.id, function (err, foundNote) {
-                const foundTodo = await this.TodoManager.getTodoById(req.user, req.params.id);
-                if (foundTodo === null) {
-                    return apiResponse.notFoundResponse(res, "Todo not exists with this id");
+                    const todoId = req.params.id
+                    const taskId = req.params.childid
+                const foundTask = await this.TaskManager.getTaskById(todoId, taskId);
+                if (foundTask === null) {
+                    return apiResponse.notFoundResponse(res, "Task not exists with this id");
                 } else {
                     //delete note.
-                    const removedTodo = await this.TodoManager.removeTodo(req.user, req.params.id);
-                    if (!removedTodo) {
-                        return apiResponse.errorResponse(res, 'Could not delete the todo');
+                    const removedTask = await this.TaskManager.removeTask(todoId, taskId);
+                    if (!removedTask) {
+                        return apiResponse.errorResponse(res, 'Could not delete the Task');
                     } else {
-                        return apiResponse.successResponse(res, "Todo delete Success.");
+                        return apiResponse.successResponse(res, "Task delete Success.");
                     }
 
                 }
@@ -181,4 +200,4 @@ class TodosApiController {
     ]
 }
 
-export default TodosApiController;
+export default TasksApiController;

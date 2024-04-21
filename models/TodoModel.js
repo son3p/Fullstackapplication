@@ -14,9 +14,10 @@ function changeIdType(doc, ret) {
 }
 
 const TodoSchema = new Schema({
-	task: {type: String, required: true},
+	todo: {type: String, required: true},
     created_at: { type: Date, required: false},
 	belongsTo: { type: Schema.ObjectId, ref: "User", required: true },
+    createdBy: { type: Schema.ObjectId, ref: "User", required: true },
     tasks: [{type: Schema.ObjectId, ref: 'Task'}]
 }, 
 {
