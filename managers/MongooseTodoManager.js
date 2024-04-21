@@ -57,15 +57,6 @@ class MongooseTodoManager {
     async addTodo(user, task, body, estimated_time, created_at, priority) {
         if (user) {
             
-            const estimatedTimeInt = parseInt(estimated_time);
-            
-            
-            if (isNaN(estimatedTimeInt)) {
-                
-                console.log(chalk.red.inverse('Invalid estimated time provided!'));
-                return null;
-            }
-            
             const haveDuplicateTodo = await this.TodoModel.findOne({ belongsTo: user.id, task }).lean();
             if (!haveDuplicateTodo) {
                 const newTodo = {
@@ -85,7 +76,7 @@ class MongooseTodoManager {
                         savedTodo.tasks = [];
                     }
     
-                    await this.addTask(todoId, priority, estimatedTimeInt, body)
+                    await this.addTask(todoId, body, estimated_time, priority)
                     savedTodo.tasks.push(todoId)
                     return savedTodo;
                 } else {
@@ -102,7 +93,7 @@ class MongooseTodoManager {
         return null;
     }
 
-    async addTask(todoId, priority, body, estimated_time) {
+    async addTask(todoId, body, estimated_time, priority) {
         
         if (todoId) {
             
