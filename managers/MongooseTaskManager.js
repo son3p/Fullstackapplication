@@ -110,8 +110,8 @@ class MongooseTaskManager {
             if (!sameTodoTask) {
                 // It is ok to change title for user
                 taskToChangeDocument.task = task.task;
-                taskToChangeDocument.estimated_time = task.estimated_time;
                 taskToChangeDocument.priority = task.priority;
+                taskToChangeDocument.estimated_time = task.estimated_time;
                 console.log(chalk.green.inverse('Task changed!'));
 
                 const changedTaskDocument = await taskToChangeDocument.save();
