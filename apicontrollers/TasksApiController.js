@@ -72,7 +72,7 @@ class TasksApiController {
      * 
      * @param {string}      task 
      * @param {string}      priority
-     * @param {number}      estimated_time
+     * @param {string}      estimated_time
      * @param {string}      created_at
       * 
      * @returns {Object}
@@ -81,7 +81,6 @@ class TasksApiController {
         // a list of callbacks
         check("task", "Task must not be empty.").isLength({ min: 1 }).trim(),
         check("priority", "Body may be empty.").trim(),
-        check("estimated_time", "Estimated time muust be a number").isNumeric(),
         body("*").escape(),
         async (req, res) => {
             try {
@@ -118,14 +117,13 @@ class TasksApiController {
  * 
  * @param {string}      task 
  * @param {string}      priority
- * @param {number}      estimated_time
+ * @param {string}      estimated_time
  * 
  * @returns {Object}
  */
     update = [
         check("task", "Task must not be empty.").isLength({ min: 1 }).trim(),
         check("priority", "Body may be empty.").trim(),
-        check("estimated_time", "Estimated time muust be a number").isNumeric(),
         body("*").escape(),
         async (req, res) => {
             try {
