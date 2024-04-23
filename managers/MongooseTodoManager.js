@@ -30,7 +30,7 @@ class MongooseTodoManager {
         }
     }
 
-    async addTodo(user, todo, created_at) {
+    async addTodo(user, todo, category, status, created_at) {
         // Check that we have a selected user
         if (user) {
             // The uniqueness for the title is now per user!
@@ -40,6 +40,8 @@ class MongooseTodoManager {
             if (!haveDuplicateTodo) {
                 const newTodo = {
                     todo: todo, // or shorter just title
+                    category: category,
+                    status: status,
                     created_at: created_at,
                     belongsTo: user.id,
                     createdBy: user.id
