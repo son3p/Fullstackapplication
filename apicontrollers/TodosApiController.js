@@ -15,6 +15,8 @@ class TodosApiController {
         return {
             id: data.id,
             todo: data.todo,
+            category: data.category,
+            status: data.status,
             createdAt: data.createdAt,
             createdBy: data.createdBy,
         }
@@ -68,7 +70,9 @@ class TodosApiController {
     /**
      * Note Create.
      * 
-     * @param {string}      todo 
+     * @param {string}      todo
+     * @param {string}      category
+     * @param {string}      status 
      * @param {string}      created_at
       * 
      * @returns {Object}
@@ -86,8 +90,10 @@ class TodosApiController {
                     //Save note.
                     const createdTodo = await this.TodoManager.addTodo(
                         req.user, 
-                        req.body.todo, 
-                        req.body.created_at
+                        req.body.todo,
+                        req.body.category,
+                        req.body.status, 
+                        req.body.created_at,
                     );
                     if (!createdTodo) {
                         return apiResponse.errorResponse(res, 'Could not create todo');
@@ -107,7 +113,8 @@ class TodosApiController {
  * Note Update.
  * 
  * @param {string}      todo 
- * @param {string}      body
+ * @param {string}      category
+ * @param {string}      status
  * 
  * @returns {Object}
  */
@@ -129,6 +136,8 @@ class TodosApiController {
                         //update note.
                         const todo = {
                             todo: req.body.todo,
+                            category: req.body.category,
+                            status: req.body.status,
                             id: req.params.id
                         };
 
