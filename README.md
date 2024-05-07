@@ -1,20 +1,28 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# REST API Documentation
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+## Introduction
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+This README provides an overview of the REST API architecture and functionalities for the Todo Application.
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+## Table of Contents
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+1. [Introduction](#introduction)
+2. [Architecture Overview](#architecture-overview)
+3. [Security](#security)
+4. [Data Storage](#data-storage)
+
+---
+
+## Architecture Overview
+
+The REST API architecture is organized into three main models: user, todo, and task. Users may have multiple todos, and each todo can have multiple tasks, with a task always tied to a parent todo. The API utilizes three controllers: authentication, tasks, and todos, to manage incoming data and direct it to the appropriate logic in the API.
+
+## Security
+
+The API is secured using Passport and JWT (JSON Web Tokens). Users are required to register and log in to access their data, and they can only manage their own todos and tasks. Express-validator is used to validate incoming data for authentication.
+
+## Data Storage
+
+For data storage, the API utilizes Azure Cosmos DB with MongoDB, ensuring a scalable and reliable database solution.
+
+---
